@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-static mut MAP: [i32; 9] = [1, 0, 0, 2, 0, 1, 1, 2, 1]; // player : 1, ai : 2
+static mut MAP: [i32; 9] = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // player : 1, ai : 2
 
 fn draw_plrs(coords: (i32, i32), w: bool) { // player : true, ai : false
     if w {
@@ -11,6 +11,18 @@ fn draw_plrs(coords: (i32, i32), w: bool) { // player : true, ai : false
         let new_coord: (f32, f32) = (coords.0 as f32 + 100.0, coords.1 as f32 + 100.0);
         draw_circle_lines(new_coord.0, new_coord.1, 80.0, 10.0, BLUE);
     }
+}
+
+fn plr_play(coords: (f32, f32)) {
+    if coords.0 > 0.0 && coords.0 < 200.0 && coords.1 > 100.0 && coords.1 < 300.0 {chng_map((1, 1), 1);}
+    if coords.0 > 230.0 && coords.0 < 430.0 && coords.1 > 100.0 && coords.1 < 300.0 {chng_map((1, 2), 1);}
+    if coords.0 > 460.0 && coords.0 < 660.0 && coords.1 > 100.0 && coords.1 < 300.0 {chng_map((1, 3), 1);}
+    if coords.0 > 0.0 && coords.0 < 200.0 && coords.1 > 330.0 && coords.1 < 530.0 {chng_map((2, 1), 1);}
+    if coords.0 > 230.0 && coords.0 < 430.0 && coords.1 > 330.0 && coords.1 < 530.0 {chng_map((2, 2), 1);}
+    if coords.0 > 460.0 && coords.0 < 660.0 && coords.1 > 330.0 && coords.1 < 530.0 {chng_map((2, 3), 1);}
+    if coords.0 > 0.0 && coords.0 < 200.0 && coords.1 > 560.0 && coords.1 < 760.0 {chng_map((3, 1), 1);}
+    if coords.0 > 230.0 && coords.0 < 430.0 && coords.1 > 560.0 && coords.1 < 760.0 {chng_map((3, 2), 1);}
+    if coords.0 > 460.0 && coords.0 < 660.0 && coords.1 > 560.0 && coords.1 < 3760.0 {chng_map((3, 3), 1);}
 }
 
 fn drawmap() {
@@ -133,6 +145,9 @@ async fn main() {
     loop {
         // 1. Nettoyer l'écran à chaque frame (l'équivalent de screen.fill en Pygame)
         clear_background(WHITE);
+
+        if is_mouse_button_pressed(MouseButton::Left)
+        {plr_play(mouse_position());}
 
         drawmap();
 
