@@ -79,8 +79,9 @@ jobs:
     - name: Compilation (Release)
       run: cargo build --release
 
-    - name: Renommer l'exécutable (Optionnel)
-      run: Rename-Item -Path target\release\jeu-rust.exe -NewName TicTacToe-Windows.exe
+    - name: Déplacer et renommer l'exécutable
+          # On déplace (mv) le fichier à la racine pour que l'étape suivante le trouve
+      run: Move-Item -Path target\release\jeu-rust.exe -Destination TicTacToe-Windows.exe
 
     - name: Mettre en ligne la Release (Windows)
       uses: softprops/action-gh-release@v2
