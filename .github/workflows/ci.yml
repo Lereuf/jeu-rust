@@ -1,10 +1,13 @@
 name: Build and Release
 
-# 1. DÉCLENCHEUR : Uniquement sur les tags
 on:
   push:
     tags:
-      - 'v*' # Ex: se déclenche si tu push un tag "v1.0" ou "v0.1.0"
+      - 'v*'
+
+# LA CORRECTION EST ICI : On donne le droit d'écriture pour créer la Release
+permissions:
+  contents: write
 
 env:
   CARGO_TERM_COLOR: always
@@ -30,17 +33,13 @@ jobs:
         sudo apt-get install -y pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev
 
     - name: Compilation (Release)
-      # On compile en mode --release pour que le jeu soit optimisé
       run: cargo build --release 
 
     - name: Création de l'AppImage
-      # L'outil AppImage nécessite une structure de dossiers spécifique (AppDir)
       run: |
-        # 1. Créer la structure
         mkdir -p AppDir/usr/bin
         cp target/release/jeu-rust AppDir/usr/bin/
         
-        # 2. Créer le fichier .desktop (requis)
         cat <<EOF > AppDir/jeu-rust.desktop
         [Desktop Entry]
         Type=Application
@@ -50,19 +49,14 @@ jobs:
         Categories=Game;
         EOF
         
-        # 3. Créer une icône factice (requis par appimagetool, tu pourras la remplacer)
         touch AppDir/jeu-rust.svg
-        
-        # 4. Créer le point d'entrée AppRun
         cd AppDir && ln -s usr/bin/jeu-rust AppRun && cd ..
         
-        # 5. Télécharger et exécuter appimagetool
         wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
         chmod +x appimagetool
         ./appimagetool --appimage-extract-and-run AppDir TicTacToe-Linux.AppImage
 
     - name: Mettre en ligne la Release (Linux)
-      # Cette action prend l'AppImage et l'attache à la page "Releases" de ton GitHub
       uses: softprops/action-gh-release@v2
       with:
         files: TicTacToe-Linux.AppImage
@@ -83,11 +77,9 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
 
     - name: Compilation (Release)
-      # Sur Windows, les dépendances graphiques de Macroquad sont gérées nativement
       run: cargo build --release
 
     - name: Renommer l'exécutable (Optionnel)
-      # Juste pour que le fichier final ait un joli nom sur GitHub
       run: Rename-Item -Path target\release\jeu-rust.exe -NewName TicTacToe-Windows.exe
 
     - name: Mettre en ligne la Release (Windows)
