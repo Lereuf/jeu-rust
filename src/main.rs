@@ -5,8 +5,8 @@ mod tictactoe;
 fn window_conf() -> Conf {
     Conf {
         window_title: "Tic Tac Toe".to_owned(),
-        window_width: 660,
-        window_height: 860,
+        window_width: 1320,
+        window_height: 1720,
         window_resizable: false,
         ..Default::default()
     }
@@ -29,6 +29,7 @@ async fn main() {
         if is_mouse_button_pressed(MouseButton::Left)
         {
             if mouse_position().0 > 20.0 && mouse_position().0 < 320.0 && mouse_position().1 > 120.0 && mouse_position().1 < 320.0 {
+                next_frame().await;
                 tictactoe::run_game().await;
             }
         }

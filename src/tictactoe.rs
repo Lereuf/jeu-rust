@@ -13,6 +13,30 @@ fn draw_plrs(coords: (i32, i32), w: bool) { // player : true, ai : false
     }
 }
 
+fn check_win() -> i32 
+{
+    unsafe {
+        if MAP[0] == 1 && MAP[1] == 1 && MAP[2] == 1 {return 1;}
+        if MAP[3] == 1 && MAP[4] == 1 && MAP[5] == 1 {return 1;}
+        if MAP[6] == 1 && MAP[7] == 1 && MAP[8] == 1 {return 1;}
+        if MAP[0] == 1 && MAP[3] == 1 && MAP[6] == 1 {return 1;}
+        if MAP[1] == 1 && MAP[4] == 1 && MAP[7] == 1 {return 1;}
+        if MAP[2] == 1 && MAP[5] == 1 && MAP[8] == 1 {return 1;}
+        if MAP[0] == 1 && MAP[4] == 1 && MAP[8] == 1 {return 1;}
+        if MAP[6] == 1 && MAP[4] == 1 && MAP[2] == 1 {return 1;}
+
+        if MAP[0] == 2 && MAP[1] == 2 && MAP[2] == 2 {return 2;}
+        if MAP[3] == 2 && MAP[4] == 2 && MAP[5] == 2 {return 2;}
+        if MAP[6] == 2 && MAP[7] == 2 && MAP[8] == 2 {return 2;}
+        if MAP[0] == 2 && MAP[3] == 2 && MAP[6] == 2 {return 2;}
+        if MAP[1] == 2 && MAP[4] == 2 && MAP[7] == 2 {return 2;}
+        if MAP[2] == 2 && MAP[5] == 2 && MAP[8] == 2 {return 2;}
+        if MAP[0] == 2 && MAP[4] == 2 && MAP[8] == 2 {return 2;}
+        if MAP[6] == 2 && MAP[4] == 2 && MAP[2] == 2 {return 2;}
+        else {return 0;}
+    }
+}
+
 // Renvoie true si le joueur a cliqué sur une case valide, false sinon
 fn plr_play(coords: (f32, f32)) -> bool {
     if coords.0 > 0.0 && coords.0 < 200.0 && coords.1 > 100.0 && coords.1 < 300.0 { return chng_map((1, 1), 1); }
@@ -201,8 +225,12 @@ pub async fn run_game() {
     
     loop {
         clear_background(WHITE);
-
-        if check_full() {
+        let mut game_running = true;
+        if check_win() != 0 || !check_full() {
+            game_running = false;
+            drawmap()
+        }
+        if game_running {
             if is_mouse_button_pressed(MouseButton::Left) {
                 // Le joueur essaie de jouer
                 let joueur_a_joue = plr_play(mouse_position());
@@ -213,9 +241,16 @@ pub async fn run_game() {
                     adv_ai_play();
                 }
             }
+            if check_win() == 1 {
+                
+            }
             drawmap();
-        } else {
-            drawmap();
+        } 
+        if check_win() == 1 {
+            in_game_print("Vous avez gagné".to_string());
+        } else if check_win() == 2 {
+            in_game_print("L'ia a gagné".to_string());
+        } else if !check_full() {
             in_game_print("match nul : la grille est pleine.".to_string());
         }
 
